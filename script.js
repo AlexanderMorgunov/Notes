@@ -1,51 +1,9 @@
-// let btnNewTask = document.querySelector("#btnNewTask");
-
-// function creatTask(){
-//     let div = document.createElement("div");
-//     div.classList.add("task", "notDone");
-//     document.querySelector("#wrapper").append(div);
-// }
-// btnNewTask.addEventListener("click",creatTask);
-
-// let wrapper = document.querySelector("#wrapper");
-
-
-// function ShowOptionOfTask(e){
-//     let div = document.createElement("div");
-//     if((e.target.classList.contains("task"))&&(e.target.children.length==0)){
-//     e.target.contentEditable="false";        
-//     div.classList.add("optionOfTask");
-//     div.insertAdjacentHTML("beforeend","<div id='editTextOfTask' class = 'optionsOfTask'>Редактировать</div><div id='DeleteTask' class = 'optionsOfTask'>Удалить</div>");
-//     e.target.append(div);
-
-//     e.target.addEventListener("mouseleave",(e)=>{
-//         if((e.target.children.length!=0)||(e.target.classList.contains("optionOfTask"))){
-//             e.target.firstElementChild.remove();
-//         }
-//     });
-//     }
-// }
-
-// wrapper.addEventListener("mouseover",ShowOptionOfTask);
-
-
-// wrapper.addEventListener("dblclick",function(e){
-    
-//     if(e.target.classList.contains("optionOfTask")){
-//         e.target.closest(".task").contentEditable="true";
-//         e.target.style.display="none";
-//         e.stopPropagation();
-//     }
-//   });
-
-
-
-
-
-  // 22.04.22
-
-
   'use strict';
+
+  let Tasks=[];
+  if(JSON.parse(localStorage.getItem("Tasks"))){
+      Tasks = JSON.parse(localStorage.getItem("Tasks"));
+  }
 
   const wrapper = document.querySelector("#wrapper"),
         btnNewTask = document.querySelector("#btnNewTask"),
@@ -53,13 +11,13 @@
         ElemEditTextOfTask = document.querySelector("#ElemEditTextOfTask"),
         ElemDeleteTask  = document.querySelector("#ElemDeleteTask"),
         ElemTagAsImportant = document.querySelector("#ElemTagAsImportant"),
-        ElemTaskDone = document.querySelector("#ElemTaskDone");
+        ElemTaskDone = document.querySelector("#ElemTaskDone"),
+        Incomplete = document.querySelector("#Incomplete"),
+        AllTasks = document.querySelector("#AllTasks");
 
 
-let Tasks=[];
-
-let i = 0;
-let j = 0;
+let i = Tasks.length;
+let j = i;
 class Task {
     constructor() {
         this.TaskDone = false;
@@ -78,12 +36,12 @@ class Task {
         wrapper.append(this.textarea);
         j++;
     }
-
 }
 function createElement(){
     let newTask = new Task();
     newTask.createElement();
     Tasks.push(newTask);
+    localStorage.setItem('Tasks',JSON.stringify(Tasks));
 }
 
 btnNewTask.addEventListener("click",createElement);
@@ -107,10 +65,8 @@ let action = false;
 
 function editTextOfTask(e){
     if(e.target.id=="ElemEditTextOfTask"){
-        console.log(e.target.parentElement);
         e.target.parentElement.remove();
         action=true;
-
     }
     function setActin(){
         action=false;
@@ -118,44 +74,122 @@ function editTextOfTask(e){
     setTimeout(setActin,2000);
 }
 
-
 function changeTask(e){
         if(e.target.type=="textarea"){
-        Tasks[e.target.parentElement.id].value = e.target.value;
+        Tasks.forEach(element => {
+            if(element.id==e.target.parentElement.id){
+                element.value=e.target.value;
+            }
+        });
         localStorage.setItem('Tasks',JSON.stringify(Tasks));
     }
 }
 
 function DeleteTask(e){
-Tasks.splice(e.target.parentElement.parentElement.id,1);
+Tasks.forEach((task,i)=>{
+    if(task.id == e.target.parentElement.parentElement.id){
+        Tasks.splice(i,1);
+    }
+});
 e.target.parentElement.parentElement.remove();
+localStorage.setItem('Tasks',JSON.stringify(Tasks));
 }
 
 function TagAsImportant(e){
     e.target.parentElement.parentElement.children[0].classList.toggle("TaskImportant");
     e.target.parentElement.parentElement.classList.toggle("TaskImportant");
-    if(Tasks[e.target.parentElement.parentElement.id].TaskDone == true){
-        Tasks[e.target.parentElement.parentElement.id].TaskDone = false;
-    }
+    Tasks.forEach(task=>{
+        if(task.id == e.target.parentElement.parentElement.id){
+            if(task.TaskImportant){
+                task.TaskImportant = false;
+            }
+            else task.TaskImportant = true;
+        }
+    });
+    localStorage.setItem('Tasks',JSON.stringify(Tasks));
 }
 
 function TaskDone(e){
     e.target.parentElement.parentElement.children[0].classList.toggle("TaskDone");
     e.target.parentElement.parentElement.classList.toggle("TaskDone");
+
     if(e.target.parentElement.parentElement.children[0].classList.contains("TaskImportant")){
         e.target.parentElement.parentElement.children[0].classList.remove("TaskImportant");
         e.target.parentElement.parentElement.classList.remove("TaskImportant");
-        // e.target.parentElement.parentElement.classList.add("TaskDone");
+        Tasks.forEach(task=>{
+            if(task.id == e.target.parentElement.parentElement.id){
+                task.TaskImportant = false;
+            }
+        });
     }
 
 
     if(e.target.parentElement.parentElement.children[0].classList.contains("TaskDone")){
-        Tasks[e.target.parentElement.parentElement.id].TaskDone = true;
+        Tasks.forEach(task=>{
+            if(task.id == e.target.parentElement.parentElement.id){
+                task.TaskDone = true;
+            }
+        });
     }
     else{
-        Tasks[e.target.parentElement.parentElement.id].TaskDone = false;
+        Tasks.forEach(task=>{
+            if(task.id == e.target.parentElement.parentElement.id){
+                task.TaskDone = false;
+            }
+        });
     }
+
+    localStorage.setItem('Tasks',JSON.stringify(Tasks));
 }
+
+function creatElementAfterLoad(){
+    if(JSON.parse(localStorage.getItem("Tasks")).length){
+    let TasksStorage = JSON.parse(localStorage.getItem("Tasks"));
+    TasksStorage.forEach(element=>{
+        let div = document.createElement("div");
+        let text = document.createElement("textarea");
+        text.value = element.value;
+        div.append(text);
+        div.classList.add("task");
+        div.id = element.id;
+        div.value = element.value;
+        if(element.TaskImportant){
+            div.classList.add("TaskImportant");
+            text.classList.add("TaskImportant");
+        }
+        if(element.TaskDone){
+            div.classList.add("TaskDone");
+            text.classList.add("TaskDone");
+        }
+        wrapper.append(div);
+    });
+}
+else{
+    createElement();
+    createElement();
+    let task = document.querySelectorAll(".task")[0];
+    task.classList.add("TaskImportant");
+    task.children[0].classList.add("TaskImportant");
+    task.children[0].value = "1. Поступить на стажировку в Северсталь";
+    Tasks[0].value = task.children[0].value;
+    Tasks[0].TaskImportant = "true";
+    localStorage.setItem('Tasks',JSON.stringify(Tasks));
+}
+}
+
+function showNotCompleateTask(){
+    let tasks = document.querySelectorAll(".task");
+    tasks.forEach(task => {
+        if(task.classList.contains("TaskDone")){
+            task.style.display="none";
+        }
+    });
+}
+
+function showAllTasks(){
+    location.reload();
+}
+
 
 wrapper.addEventListener("click",editTextOfTask);
 
@@ -169,7 +203,13 @@ ElemTagAsImportant.addEventListener("click",TagAsImportant);
 
 ElemTaskDone.addEventListener("click",TaskDone);
 
+window.addEventListener("load",creatElementAfterLoad);
 
-// setTimeout(function(){localStorage.setItem('array',Tasks)},2000);
+Incomplete.addEventListener("click",showNotCompleateTask);
 
-// localStorage.setItem('array',Tasks);
+AllTasks.addEventListener("click", showAllTasks);
+
+
+
+
+
