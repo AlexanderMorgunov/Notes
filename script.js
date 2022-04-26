@@ -49,16 +49,9 @@ btnNewTask.addEventListener("click",createElement);
 function ShowOptionOfTask(e){
 
     if(e.target.classList.contains("task")&&!action){
-        e.target.contentEditable="false";
         optionOfTasks.style.display="block";
         e.target.append(optionOfTasks);
     }
-    e.target.addEventListener("mouseleave",(e)=>{
-                    if((e.target.classList.contains("optionOfTask"))){
-                    optionOfTasks.style.display="none";
-                }
-            });
-
 }
 
 let action = false;
@@ -68,10 +61,10 @@ function editTextOfTask(e){
         e.target.parentElement.remove();
         action=true;
     }
-    function setActin(){
+    function setAction(){
         action=false;
     }
-    setTimeout(setActin,2000);
+    setTimeout(setAction,2000);
 }
 
 function changeTask(e){
@@ -122,7 +115,6 @@ function TaskDone(e){
             }
         });
     }
-
 
     if(e.target.parentElement.parentElement.children[0].classList.contains("TaskDone")){
         Tasks.forEach(task=>{
@@ -208,8 +200,3 @@ window.addEventListener("load",creatElementAfterLoad);
 Incomplete.addEventListener("click",showNotCompleateTask);
 
 AllTasks.addEventListener("click", showAllTasks);
-
-
-
-
-
