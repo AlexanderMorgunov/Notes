@@ -135,7 +135,7 @@ function TaskDone(e){
 }
 
 function creatElementAfterLoad(){
-    if(JSON.parse(localStorage.getItem("Tasks")).length){
+    if(localStorage.getItem("Tasks")!==null){
     let TasksStorage = JSON.parse(localStorage.getItem("Tasks"));
     TasksStorage.forEach(element=>{
         let div = document.createElement("div");
@@ -162,7 +162,7 @@ else{
     let task = document.querySelectorAll(".task")[0];
     task.classList.add("TaskImportant");
     task.children[0].classList.add("TaskImportant");
-    task.children[0].value = "1. Поступить на стажировку в Северсталь";
+    task.children[0].value = "1. Поступить на стажировку";
     Tasks[0].value = task.children[0].value;
     Tasks[0].TaskImportant = "true";
     localStorage.setItem('Tasks',JSON.stringify(Tasks));
