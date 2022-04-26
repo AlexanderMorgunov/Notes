@@ -13,7 +13,8 @@
         ElemTagAsImportant = document.querySelector("#ElemTagAsImportant"),
         ElemTaskDone = document.querySelector("#ElemTaskDone"),
         Incomplete = document.querySelector("#Incomplete"),
-        AllTasks = document.querySelector("#AllTasks");
+        AllTasks = document.querySelector("#AllTasks"),
+        btnDeleteTasks = document.querySelector("#btnDeleteTasks");
 
 
 let i = Tasks.length;
@@ -182,6 +183,13 @@ function showAllTasks(){
     location.reload();
 }
 
+function DeleteTasks(){
+    Tasks.length = 0;
+    localStorage.clear();
+    document.querySelectorAll(".task").forEach(task=>{
+        task.remove();
+    })
+}
 
 wrapper.addEventListener("click",editTextOfTask);
 
@@ -200,3 +208,5 @@ window.addEventListener("load",creatElementAfterLoad);
 Incomplete.addEventListener("click",showNotCompleateTask);
 
 AllTasks.addEventListener("click", showAllTasks);
+
+btnDeleteTasks.addEventListener("click",DeleteTasks);
