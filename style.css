@@ -19,8 +19,7 @@ top:0;
 z-index: 2;
 }
 #author{
-    /* position: absolute;
-    left:0px; */
+    width: 150px;
     font-family: 'Pacifico', cursive;
     font-size: 12px;
 }
@@ -33,6 +32,11 @@ z-index: 2;
     justify-content: center;
     flex-wrap:wrap;
     height: 89vh;
+}
+.buttonWrapper{
+    width:90vw;
+    display:flex;
+    justify-content: space-around;
 }
 .task{
     width:290px;
