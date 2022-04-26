@@ -19,8 +19,8 @@ top:0;
 z-index: 2;
 }
 #author{
-    position: absolute;
-    left:0px;
+    /* position: absolute;
+    left:0px; */
     font-family: 'Pacifico', cursive;
     font-size: 12px;
 }
