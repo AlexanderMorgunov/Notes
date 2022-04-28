@@ -25,10 +25,13 @@ class Task {
         this.TaskImportant = false;
         this.value=null;
         this.id = i;
+        let now = new Date();
+        this.time = ((`${now.getDay()}.${now.getMonth()}.${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}`)).toString();
         i++;
     }
     createElement() {
         this.textarea = document.createElement("div");
+        this.textarea.append(this.time);
         this.text = document.createElement("textarea");
         this.textarea.append(this.text);
         this.textarea.classList.add("task");
@@ -42,16 +45,23 @@ function createElement(){
     let newTask = new Task();
     newTask.createElement();
     Tasks.push(newTask);
+
     localStorage.setItem('Tasks',JSON.stringify(Tasks));
 }
 
 btnNewTask.addEventListener("click",createElement);
 
 function ShowOptionOfTask(e){
-
+    e.preventDefault();
     if(e.target.classList.contains("task")&&!action){
         optionOfTasks.style.display="block";
         e.target.append(optionOfTasks);
+    }
+}
+
+function HideOptionOfTask(e){
+    if((e.target.id=="wrapper")&&(optionOfTasks.style.display=="block")){
+        optionOfTasks.style.display="none";
     }
 }
 
@@ -80,6 +90,7 @@ function changeTask(e){
 }
 
 function DeleteTask(e){
+    if(confirm("Вы уверены?")){
 Tasks.forEach((task,i)=>{
     if(task.id == e.target.parentElement.parentElement.id){
         Tasks.splice(i,1);
@@ -87,6 +98,7 @@ Tasks.forEach((task,i)=>{
 });
 e.target.parentElement.parentElement.remove();
 localStorage.setItem('Tasks',JSON.stringify(Tasks));
+    }
 }
 
 function TagAsImportant(e){
@@ -138,8 +150,9 @@ function TaskDone(e){
 function creatElementAfterLoad(){
     if(localStorage.getItem("Tasks")!==null){
     let TasksStorage = JSON.parse(localStorage.getItem("Tasks"));
-    TasksStorage.forEach(element=>{
+    TasksStorage.forEach((element,i)=>{
         let div = document.createElement("div");
+        div.append(Tasks[i].time);
         let text = document.createElement("textarea");
         text.value = element.value;
         div.append(text);
@@ -184,16 +197,18 @@ function showAllTasks(){
 }
 
 function DeleteTasks(){
-    Tasks.length = 0;
-    localStorage.clear();
-    document.querySelectorAll(".task").forEach(task=>{
-        task.remove();
-    })
+    if(confirm("Вы уверены?")){
+        Tasks.length = 0;
+        localStorage.clear();
+        document.querySelectorAll(".task").forEach(task=>{
+            task.remove();
+        })
+    }
 }
 
 wrapper.addEventListener("click",editTextOfTask);
 
-wrapper.addEventListener("mouseover",ShowOptionOfTask);
+wrapper.addEventListener("contextmenu",ShowOptionOfTask);
 
 wrapper.addEventListener("change",changeTask);
 
@@ -210,3 +225,6 @@ Incomplete.addEventListener("click",showNotCompleateTask);
 AllTasks.addEventListener("click", showAllTasks);
 
 btnDeleteTasks.addEventListener("click",DeleteTasks);
+
+wrapper.addEventListener("click",HideOptionOfTask);
+
