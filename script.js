@@ -26,7 +26,7 @@ class Task {
         this.value=null;
         this.id = i;
         let now = new Date();
-        this.time = ((`${now.getDay()}.${now.getMonth()}.${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}`)).toString();
+        this.time = ((`${now.getDate()}.${now.getMonth()+1}.${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}`)).toString();
         i++;
     }
     createElement() {
