@@ -20,8 +20,8 @@ class Task {
     constructor() {
         this.TaskDone = false;
         this.TaskImportant = false;
-        this.HeaderValue=null;
-        this.TextValue=null;
+        this.HeaderValue ='Заголовок';
+        this.TextValue ='';
         this.id = Math.random(0, 99);
         let now = new Date();
         this.time = ((`${now.getDate()}.${now.getMonth()+1}.${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}`)).toString();
@@ -34,7 +34,7 @@ class Task {
 
         this.header = document.createElement('textarea');
         this.header.classList.add('TaskHeader');
-        this.header.textContent = 'Заголовок';
+        this.header.textContent = this.HeaderValue;
         this.textarea.append(this.header);
 
         this.textarea.append(this.text);
@@ -42,8 +42,6 @@ class Task {
 
         
         this.textarea.id = this.id;
-        this.HeaderValue = this.HeaderValue;
-        this.TextValue = this.TextValue;
         wrapper.append(this.textarea);
     }
 }
@@ -88,7 +86,7 @@ function changeTask(e){
         if(e.target.type=="textarea"){
         Tasks.forEach(element => {
             if(element.id==e.target.parentElement.id){
-                e.target.className == 'TaskHeader' ? element.HeaderValue = e.target.value : element.TextValue = e.target.value;
+                e.target.classList[0] == 'TaskHeader'? element.HeaderValue = e.target.value : element.TextValue = e.target.value;
             }
         });
         localStorage.setItem('Tasks',JSON.stringify(Tasks));
