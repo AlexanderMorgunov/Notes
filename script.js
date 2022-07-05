@@ -16,29 +16,35 @@
         AllTasks = document.querySelector("#AllTasks"),
         btnDeleteTasks = document.querySelector("#btnDeleteTasks");
 
-
-let i = Tasks.length;
-let j = i;
 class Task {
     constructor() {
         this.TaskDone = false;
         this.TaskImportant = false;
-        this.value=null;
-        this.id = i;
+        this.HeaderValue=null;
+        this.TextValue=null;
+        this.id = Math.random(0, 99);
         let now = new Date();
         this.time = ((`${now.getDate()}.${now.getMonth()+1}.${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}`)).toString();
-        i++;
     }
     createElement() {
         this.textarea = document.createElement("div");
+
         this.textarea.append(this.time);
         this.text = document.createElement("textarea");
+
+        this.header = document.createElement('textarea');
+        this.header.classList.add('TaskHeader');
+        this.header.textContent = 'Заголовок';
+        this.textarea.append(this.header);
+
         this.textarea.append(this.text);
         this.textarea.classList.add("task");
-        this.textarea.id = j;
-        this.value = this.textarea.children[0].value;
+
+        
+        this.textarea.id = this.id;
+        this.HeaderValue = this.HeaderValue;
+        this.TextValue = this.TextValue;
         wrapper.append(this.textarea);
-        j++;
     }
 }
 function createElement(){
@@ -82,7 +88,7 @@ function changeTask(e){
         if(e.target.type=="textarea"){
         Tasks.forEach(element => {
             if(element.id==e.target.parentElement.id){
-                element.value=e.target.value;
+                e.target.className == 'TaskHeader' ? element.HeaderValue = e.target.value : element.TextValue = e.target.value;
             }
         });
         localStorage.setItem('Tasks',JSON.stringify(Tasks));
@@ -101,8 +107,9 @@ localStorage.setItem('Tasks',JSON.stringify(Tasks));
     }
 }
 
-function TagAsImportant(e){
+function MarkAsImportant(e){
     e.target.parentElement.parentElement.children[0].classList.toggle("TaskImportant");
+    e.target.parentElement.parentElement.children[1].classList.toggle("TaskImportant");
     e.target.parentElement.parentElement.classList.toggle("TaskImportant");
     Tasks.forEach(task=>{
         if(task.id == e.target.parentElement.parentElement.id){
@@ -117,10 +124,12 @@ function TagAsImportant(e){
 
 function TaskDone(e){
     e.target.parentElement.parentElement.children[0].classList.toggle("TaskDone");
+    e.target.parentElement.parentElement.children[1].classList.toggle("TaskDone");
     e.target.parentElement.parentElement.classList.toggle("TaskDone");
 
     if(e.target.parentElement.parentElement.children[0].classList.contains("TaskImportant")){
         e.target.parentElement.parentElement.children[0].classList.remove("TaskImportant");
+        e.target.parentElement.parentElement.children[1].classList.remove("TaskImportant");
         e.target.parentElement.parentElement.classList.remove("TaskImportant");
         Tasks.forEach(task=>{
             if(task.id == e.target.parentElement.parentElement.id){
@@ -153,19 +162,26 @@ function creatElementAfterLoad(){
     TasksStorage.forEach((element,i)=>{
         let div = document.createElement("div");
         div.append(Tasks[i].time);
+
+        let header = document.createElement('textarea');
+        header.classList.add('TaskHeader');
+        header.value = element.HeaderValue;
+        div.append(header);
         let text = document.createElement("textarea");
-        text.value = element.value;
+        text.value = element.TextValue;
         div.append(text);
         div.classList.add("task");
         div.id = element.id;
-        div.value = element.value;
+
         if(element.TaskImportant){
             div.classList.add("TaskImportant");
             text.classList.add("TaskImportant");
+            header.classList.add("TaskImportant");
         }
         if(element.TaskDone){
             div.classList.add("TaskDone");
             text.classList.add("TaskDone");
+            header.classList.add("TaskDone");
         }
         wrapper.append(div);
     });
@@ -173,12 +189,6 @@ function creatElementAfterLoad(){
 else{
     createElement();
     createElement();
-    let task = document.querySelectorAll(".task")[0];
-    task.classList.add("TaskImportant");
-    task.children[0].classList.add("TaskImportant");
-    task.children[0].value = "1. Поступить на стажировку";
-    Tasks[0].value = task.children[0].value;
-    Tasks[0].TaskImportant = "true";
     localStorage.setItem('Tasks',JSON.stringify(Tasks));
 }
 }
@@ -214,7 +224,7 @@ wrapper.addEventListener("change",changeTask);
 
 ElemDeleteTask.addEventListener("click",DeleteTask);
 
-ElemTagAsImportant.addEventListener("click",TagAsImportant);
+ElemTagAsImportant.addEventListener("click",MarkAsImportant);
 
 ElemTaskDone.addEventListener("click",TaskDone);
 
@@ -222,7 +232,7 @@ window.addEventListener("load",creatElementAfterLoad);
 
 Incomplete.addEventListener("click",showNotCompleateTask);
 
-AllTasks.addEventListener("click", showAllTasks);
+AllTasks.addEventListener("click", showAllTasks);   
 
 btnDeleteTasks.addEventListener("click",DeleteTasks);
 
