@@ -55,6 +55,8 @@ function createElement(){
 
 btnNewTask.addEventListener("click",createElement);
 
+let action = false;
+
 function ShowOptionOfTask(e){
     e.preventDefault();
     if(e.target.classList.contains("task")&&!action){
@@ -64,12 +66,10 @@ function ShowOptionOfTask(e){
 }
 
 function HideOptionOfTask(e){
-    if((e.target.id=="wrapper")&&(optionOfTasks.style.display=="block")){
+        if((e.target.className !="optionOfTasks")&&(optionOfTasks.style.display=="block")){
         optionOfTasks.style.display="none";
     }
 }
-
-let action = false;
 
 function editTextOfTask(e){
     if(e.target.id=="ElemEditTextOfTask"){
