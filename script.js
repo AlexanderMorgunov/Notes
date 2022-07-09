@@ -22,7 +22,7 @@ class Task {
         this.TaskDone = false;
         this.TaskImportant = false;
         this.HeaderValue ='Заголовок';
-        this.HeaderFontSize = '23';
+        this.HeaderFontSize = '23px';
         this.TextValue ='';
         this.id = Math.random(0, 99);
         let now = new Date();
@@ -36,7 +36,7 @@ class Task {
 
         this.header = document.createElement('textarea');
         this.header.classList.add('TaskHeader');
-        this.header.style.fontSize = this.HeaderFontSize+'px';
+        this.header.style.fontSize = this.HeaderFontSize;
         this.header.textContent = this.HeaderValue;
 
         this.div.append(this.header);
@@ -64,6 +64,7 @@ function ShowOptionOfTask(e){
     e.preventDefault();
     if(e.target.classList.contains("task")&&!action){
         optionOfTasks.style.display="block";
+        e.target.children[1].style.fontSize == false ? e.target.children[1].style.fontSize = '23px' : 
         optionOfTasks.children[5].value = e.target.children[1].style.fontSize.match(/\d/g).join('');
         e.target.append(optionOfTasks);
     }
@@ -167,7 +168,7 @@ function TaskDone(e){
     localStorage.setItem('Tasks',JSON.stringify(Tasks));
 }
 
-function creatElementAfterLoad(){
+function createElementAfterLoad(){
     if(localStorage.getItem("Tasks")!==null){
     let TasksStorage = JSON.parse(localStorage.getItem("Tasks"));
     TasksStorage.forEach((element,i)=>{
@@ -209,7 +210,7 @@ else{
 }
 }
 
-function showNotCompleateTask(){
+function showNotCompleteTask(){
     let tasks = document.querySelectorAll(".task");
     tasks.forEach(task => {
         if(task.classList.contains("TaskDone")){
@@ -246,27 +247,43 @@ function changeTaskFontSize(element) {
     localStorage.setItem('Tasks',JSON.stringify(Tasks));
 }
 
+function toggleReadonlyForTaskHeader(e) {
+    if(e.target.textLength >= 30) {
+        e.target.setAttribute('readonly','readonly');
+
+        if(e.key == 'Backspace') {
+            e.target.value = e.target.value.slice(0,e.target.value.length-1);
+            if(e.target.textLength <= 31){
+                e.target.removeAttribute('readonly');
+            }
+        }
+
+    }
+}
+
 function autoChangeFontTaskHeader(e, element) {
 
-    if(element.HeaderValue.length <= 10){
+    toggleReadonlyForTaskHeader(e);
+
+    if(element.HeaderValue.length == 0){
         e.target.style.fontSize = '23px';
     }
 
-    if(e.target.textLength >= 10) {
+    if((e.target.textLength >= 10) && (e.target.textLength < 30)) {
+
+        let fontSize = +(e.target.style.fontSize.slice(0,e.target.style.fontSize.length-2));
 
         if(element.HeaderValue.length < e.target.textLength) {
-            if(+(e.target.style.fontSize.slice(0,e.target.style.fontSize.length-2)) >= 15) {
-                e.target.style.fontSize = `${+(e.target.style.fontSize.slice(0,e.target.style.fontSize.length-2)) - 0.5}px`
-            }
 
-        } else if((element.HeaderValue.length > e.target.textLength)&&+(e.target.style.fontSize.slice(0,e.target.style.fontSize.length-2)) < 23){
-            e.target.style.fontSize = `${+(e.target.style.fontSize.slice(0,e.target.style.fontSize.length-2)) + 0.5}px`
-        }
+            let textLength = e.target.textLength;
 
-        element.HeaderFontSize = e.target.style.fontSize;
+            e.target.style.fontSize = `${fontSize - fontSize*0.018}px`;
 
+        } else if((e.target.textLength >= 10) && (fontSize < 23)){
+        e.target.style.fontSize = `${fontSize + fontSize*0.018}px`;
     }
-    
+        element.HeaderFontSize = e.target.style.fontSize;
+    }
 }
 
 ElemChangeFontSize.addEventListener('change', (e) => {changeTaskFontSize(e)});
@@ -283,9 +300,9 @@ ElemTagAsImportant.addEventListener("click",MarkAsImportant);
 
 ElemTaskDone.addEventListener("click",TaskDone);
 
-window.addEventListener("load",creatElementAfterLoad);
+window.addEventListener("load",createElementAfterLoad);
 
-Incomplete.addEventListener("click",showNotCompleateTask);
+Incomplete.addEventListener("click",showNotCompleteTask);
 
 btnAllTasks.addEventListener("click", showAllTasks);   
 
