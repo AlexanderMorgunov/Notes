@@ -109,9 +109,16 @@ textarea{
 }
 .TaskHeader{
     color:#8b0707;
-    font-size: 23px;
     font-weight: 590;
     height: 40px;
     border: none;
     resize:none;
 }
+
+#ElemChangeFontSize {
+    width: 30%;
+    background-color:#3cb371;
+    border-radius:2px;
+    text-align: center;
+}
+
